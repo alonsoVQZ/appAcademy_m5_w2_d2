@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function ContactUs() {
   const [name, setName] = useState('');
@@ -6,7 +6,19 @@ function ContactUs() {
   const [phone, setPhone] = useState('');
   const [phoneType, setPhoneType] = useState('');
   const [comments, setComments] = useState('');
-  
+  const [validationErrors, setValidationErrors] = useState([]);
+
+  useEffect(() => {
+    const errors = new Array();
+    if(name.length <= 0) {
+      errors.push('Please enter your Name');
+    }
+    if(!email.includes('@')) {
+      errors.push('Please provide a valid Email');
+    }
+    setValidationErrors(errors)
+  }, [name, email])
+
   const onSubmit = e => {
     // Prevent the default form behavior so the page doesn't reload.
     e.preventDefault();
@@ -34,7 +46,20 @@ function ContactUs() {
   }
 
   return (
+    
     <div>
+      {
+        validationErrors.length > 0 && (
+          <div>
+            The following errors were found:
+            <ul>
+              {validationErrors.map(error => (
+                <li key={error}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
       <h2>Contact Us</h2>
       <form onSubmit={onSubmit}>
         <div>
